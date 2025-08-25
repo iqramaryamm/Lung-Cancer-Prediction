@@ -10,9 +10,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-
-
 from sklearn.model_selection import GridSearchCV
+
 
 def default_model_zoo(random_state: int = 42) -> Dict[str, Pipeline]:
     """
@@ -25,7 +24,7 @@ def default_model_zoo(random_state: int = 42) -> Dict[str, Pipeline]:
             ("model", LogisticRegression(max_iter=2000, n_jobs=None))
         ]),
         "Random Forest": Pipeline([
-            ("scaler", StandardScaler(with_mean=False)),  # RF not sensitive to scaling, keep light
+            ("scaler", StandardScaler(with_mean=False)),  # RF not sensitive to scaling
             ("model", RandomForestClassifier(random_state=random_state))
         ]),
         "Decision Tree": Pipeline([
@@ -37,8 +36,8 @@ def default_model_zoo(random_state: int = 42) -> Dict[str, Pipeline]:
             ("model", KNeighborsClassifier())
         ]),
         
-              
     }
+
 
 def default_param_grids() -> Dict[str, dict]:
     """
@@ -60,16 +59,52 @@ def default_param_grids() -> Dict[str, dict]:
             "model__min_samples_split": [2, 5, 10],
         },
         "KNN": {
-            "model__n_neighbors": [3, 5, 7,  nine := 9],
+            "model__n_neighbors": [3, 5, 7, 9],
             "model__weights": ["uniform", "distance"],
         },
-        "Gradient Boosting": {
-            "model__n_estimators": [100, 200],
-            "model__learning_rate": [0.05, 0.1],
-            "model__max_depth": [2, 3],
-        },
-
     }
+
+
+def _remove_leakage(X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    """
+    Remove columns that leak target information:
+    - Exact duplicates of target
+    - High-cardinality IDs
+    - Features highly correlated with target
+    """
+    X = X.copy()
+
+    # 1) Drop columns identical to target
+    leakage_cols = [col for col in X.columns if X[col].equals(y)]
+    if leakage_cols:
+        print(f"⚠️ Dropping leakage columns (identical to y): {leakage_cols}")
+        X = X.drop(columns=leakage_cols)
+
+    # 2) Drop obvious ID-like columns
+    for id_col in ["Patient Id"]:
+        if id_col in X.columns:
+            print(f"Dropping ID-like column: {id_col}")
+            X = X.drop(columns=[id_col])
+
+    # 3) Drop highly correlated features with target
+    if pd.api.types.is_numeric_dtype(y):
+        y_numeric = y
+    else:
+        try:
+            y_numeric = y.astype("category").cat.codes
+        except Exception:
+            y_numeric = None
+
+    if y_numeric is not None:
+        corr = pd.concat([X, y_numeric.rename("target")], axis=1).corr(numeric_only=True)
+        target_corr = corr["target"].drop("target")
+        high_corr = target_corr[abs(target_corr) >= 0.95].index.tolist()
+        if high_corr:
+            print(f" Dropping highly correlated features with target: {high_corr}")
+            X = X.drop(columns=high_corr)
+
+    return X
+
 
 def train_models(
     X_train: pd.DataFrame,
@@ -82,7 +117,12 @@ def train_models(
     """
     Trains a suite of models and returns fitted estimators.
     Set use_grid_search=True to perform GridSearchCV with default grids.
+    Includes leakage checks.
     """
+    # ---- Leakage check ----
+    X_train = _remove_leakage(X_train, y_train)
+
+    # ---- Train models ----
     models = default_model_zoo(random_state=random_state)
     fitted: Dict[str, Pipeline] = {}
 
@@ -105,4 +145,5 @@ def train_models(
         else:
             pipe.fit(X_train, y_train)
             fitted[name] = pipe
+
     return fitted

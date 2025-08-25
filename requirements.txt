@@ -6,3 +6,5 @@ matplotlib
 Flask
 xgboost
 lightgbm
+shap
+scripy

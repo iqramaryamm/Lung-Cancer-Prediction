@@ -91,4 +91,4 @@ class DataAnalyser:
             axes[j].axis("off")
 
         plt.tight_layout()
-        return fig   # ✅ return fig
+        return fig   

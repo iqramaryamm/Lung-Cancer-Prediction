@@ -1,14 +1,16 @@
 # data_loader.py
 from __future__ import annotations
 import pandas as pd
-from typing import Tuple, Optional
+from typing import Tuple
 from sklearn.model_selection import train_test_split
 
 class DataLoader:
     """
+    
     Loads and minimally preprocesses the cancer patient dataset.
     - Encodes Level -> {low:0, Medium:1, High:2}
     - Drops 'Patient Id' if present
+    - Ensures target column is excluded from preprocessing of features (avoid leakage)
     - Returns X, y and the processed DataFrame for optional EDA
     """
 
@@ -16,18 +18,7 @@ class DataLoader:
         self.target_col = target_col
         self.id_col = id_col
 
-    # def load(self, path: str) -> pd.DataFrame:
-    #     if path.endswith(".xlsx") :
-    #         df = pd.read_excel(path)
-    #     elif path.endswith(".csv"):
-    #         df = pd.read_csv(path)
-    #     else:
-    #         raise ValueError("Unsupported file type. Use .xlsx, .xls, or .csv")
-    #     return df
-
     def load(self, path) -> pd.DataFrame:
-    
-
         if hasattr(path, "name"):
             filename = path.name
         else:
@@ -41,15 +32,14 @@ class DataLoader:
             raise ValueError("Unsupported file type. Use .xlsx or .csv")
         return df
 
-
     def preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
 
-        # drop id column if present
+        # Drop ID column if present
         if self.id_col in df.columns:
             df = df.drop(columns=[self.id_col])
 
-        # normalize target label capitalization & map
+        # Normalize target label capitalization & map
         if self.target_col in df.columns:
             df[self.target_col] = (
                 df[self.target_col]
@@ -61,10 +51,13 @@ class DataLoader:
         else:
             raise KeyError(f"Target column '{self.target_col}' not found.")
 
-        # basic NA handling (you can customize this)
-        # Drop rows with NA in target; fill numeric NA with column medians
+        # Drop rows with NA in target
         df = df.dropna(subset=[self.target_col])
+
+        # Fill numeric NA with medians (EXCLUDING target to avoid leakage!)
         num_cols = df.select_dtypes(include="number").columns.tolist()
+        if self.target_col in num_cols:
+            num_cols.remove(self.target_col)   # ✅ prevents leakage
         df[num_cols] = df[num_cols].fillna(df[num_cols].median())
 
         return df
