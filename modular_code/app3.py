@@ -23,7 +23,7 @@ model = joblib.load("Logistic_Regression.pkl")
 
 # ---- Groq API ----
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_API_KEY = "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"  # ideally use env var
+GROQ_API_KEY = "Enter API key"  # ideally use env var
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def get_treatment_recommendation(patient_data: dict, risk_level: str) -> str:
