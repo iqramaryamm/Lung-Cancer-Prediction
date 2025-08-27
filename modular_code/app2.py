@@ -10,7 +10,7 @@ model = joblib.load("Logistic_Regression.pkl")
 
 ## Groq API set up 
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "Enter API key"
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def get_treatment_recommendation(patient_data: dict, risk_level: str) -> str:
