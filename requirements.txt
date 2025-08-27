@@ -4,7 +4,7 @@ scikit-learn
 seaborn
 matplotlib
 Flask
-xgboost
-lightgbm
-shap
-scripy
+groq
+langchain
+langchain-community
+langchain-groq

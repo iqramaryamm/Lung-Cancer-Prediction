@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
-
+import pickle as pkl
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -112,6 +112,7 @@ def train_models(
     use_grid_search: bool = False,
     cv: int = 3,
     n_jobs: int = -1,
+    save_models: bool = True,
     random_state: int = 42,
 ) -> Dict[str, Pipeline]:
     """
@@ -146,4 +147,12 @@ def train_models(
             pipe.fit(X_train, y_train)
             fitted[name] = pipe
 
+        if save_models:
+            filename = f"{name.replace(' ', '_')}.pkl"
+            with open(filename, "wb") as f:
+                pkl.dump(fitted[name], f)
+            print(f"✅ Saved {name} model to {filename}")
+
     return fitted
+
+   
