@@ -2,7 +2,7 @@ from langchain_groq import ChatGroq
 from langchain.prompts import ChatPromptTemplate
 
 
-api_key = "Enter API Key Here"
+api_key = "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"
 
 # 1) Initialize Groq LLM via LangChain
 llm = ChatGroq(
