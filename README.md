@@ -45,20 +45,9 @@ The pipeline processes a cancer patient dataset (in `.csv` or `.xlsx` format) wi
 4. **ModelEvaluator** (`model_evaluator.py`):
    - Computes performance metrics (accuracy, F1-score, precision, recall).
    - Generates confusion matrices and a bar chart comparing model accuracies.
-
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
-2. Install dependencies:
-   ```bash
    
-   
-
 ## Usage
-The pipeline can be used in a Python script or Jupyter notebook. Below is a basic example of how to use the components together.
+The pipeline can be used in a Python script or Jupyter notebook. Below is a basic example of how i have used the components together.
 
 ### Example
 ```python
@@ -101,7 +90,7 @@ This script loads a dataset, performs EDA, trains models with hyperparameter tun
 
 Install with:
 ```bash
-pip install pandas numpy matplotlib seaborn scikit-learn openpyxl
+pip install pandas numpy scikit-learn seaborn matplotlib groq langchain langchain-community langchain-groq
 ```
 
 ## Assumptions and Notes
@@ -112,4 +101,5 @@ pip install pandas numpy matplotlib seaborn scikit-learn openpyxl
 - Visualizations require a matplotlib backend (e.g., Jupyter or Streamlit).
 - Grid search is computationally intensive; use `n_jobs=-1` for parallel processing.
 - The pipeline assumes a clean dataset; additional preprocessing may be needed for specific cases.
+
 
