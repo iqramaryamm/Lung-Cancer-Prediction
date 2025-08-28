@@ -22,7 +22,7 @@ The pipeline processes a cancer patient dataset (in `.csv` or `.xlsx` format) wi
 ## Features
 - Supports `.csv` and `.xlsx` file formats.
 - Encodes target variable (`Level`) as numerical values (`low: 0, medium: 1, high: 2`).
-- Handles missing values and removes ID-like columns to prevent leakage.
+- Handles missing values and removes Patient-ID like columns to prevent leakage.
 - Provides EDA with correlation heatmaps, histograms, and class balance analysis.
 - Trains multiple models (Logistic Regression, Random Forest, Decision Tree, KNN) with pipelines to ensure proper scaling.
 - Evaluates models with accuracy, F1-score, precision, recall, confusion matrices, and classification reports.
