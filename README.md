@@ -88,9 +88,6 @@ This script loads a dataset, performs EDA, trains models with hyperparameter tun
 - `scikit-learn`: Machine learning models and metrics.
 - `openpyxl`: Support for `.xlsx` files.
 
-Install with:
-```bash
-pip install pandas numpy scikit-learn seaborn matplotlib groq langchain langchain-community langchain-groq
 ```
 
 ## Assumptions and Notes
@@ -103,3 +100,38 @@ pip install pandas numpy scikit-learn seaborn matplotlib groq langchain langchai
 - The pipeline assumes a clean dataset; additional preprocessing may be needed for specific cases.
 
 
+Why I Consider Logistic Regression?
+
+Logistic Regression is a foundational linear model often used for binary classification  Here's why it's a strong choice for this problem:
+
+Interpretability for Insights: It provides coefficients (odds ratios) for each feature, directly showing how variables like smoking history or genetic markers increase/decrease cancer risk. This helps answer "what causes cancer" by quantifying feature impacts (eg high coefficient for age might indicate it's a key risk factor).
+
+Simplicity and Efficiency: It assumes a linear relationship between features and the log-odds of the outcome, making it fast to train on moderate-sized datasets. No need for heavy computation, which is ideal for quick iterations in research.
+
+Handling Imbalanced Data: Cancer datasets often have class imbalance (e.g., more non-cancer cases). Logistic Regression works well with techniques like weighting or thresholding to handle this.
+
+
+Why Consider Decision Trees?
+
+Handling Non-Linearity and Mixed Data: Unlike linear models, trees capture complex, non-linear relationships without assumptions. Cancer data often includes categorical (eg: gender) and continuous (e.g., biomarker levels) features, which trees handle natively.
+
+Robustness to Outliers/Missing Data: Common in patient datasets; Decision trees can manage this without much preprocessing.
+
+
+
+Why Consider K-Nearest Neighbors (KNN)?
+
+Instance-based learner that classifies new data based on similarity to 'k' nearest training points. It's useful here for:
+
+Exploratory Analysis: Helps visualize data clusters (e.g., via distance metrics), revealing subgroups prone to certain cancers or treatments.
+
+Ease of Implementation: Simple to tune (mainly 'k' and distance metric), and effective for small-to-medium datasets where computational cost isn't prohibitive.
+
+
+Why not other Approaches ?
+
+Lack of Interpretability: Models like Neural Networks are "black boxes," making it hard to extract clear insights into causes/treatments (e.g., why a feature matters).
+
+Overfitting and Data Requirements: Cancer datasets are often small/high-dimensional (curse of dimensionality). Complex models like Deep Learning need massive data to avoid overfitting and generalize; KNN/Decision Trees perform better on limited samples without heavy regularization
+
+Scalability to High Dimensions: Cancer data can have many features,  statistical methods struggle with multicollinearity, while Logistic Regression/KNN manage via  feature selection.
